@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentClassifier", "DocumentClassifier\DocumentClassifier.csproj", "{8C7C552B-B092-4F02-AD03-6D74D55768FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassifierTest", "ClassifierTest\ClassifierTest.csproj", "{660F5109-DF44-4A8F-AEDD-354B77D9F38B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentClasssifier.Neural", "DocumentClasssifier.Neural\DocumentClasssifier.Neural.csproj", "{42514CA7-FF4C-467A-99F9-9ECCE704512A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentClassifier.Imaging", "DocumentClassifier.Imaging\DocumentClassifier.Imaging.csproj", "{4A81DFAB-333A-4D8C-A44F-7C086BC37006}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C7C552B-B092-4F02-AD03-6D74D55768FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C7C552B-B092-4F02-AD03-6D74D55768FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C7C552B-B092-4F02-AD03-6D74D55768FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C7C552B-B092-4F02-AD03-6D74D55768FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{660F5109-DF44-4A8F-AEDD-354B77D9F38B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{660F5109-DF44-4A8F-AEDD-354B77D9F38B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{660F5109-DF44-4A8F-AEDD-354B77D9F38B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{660F5109-DF44-4A8F-AEDD-354B77D9F38B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42514CA7-FF4C-467A-99F9-9ECCE704512A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42514CA7-FF4C-467A-99F9-9ECCE704512A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42514CA7-FF4C-467A-99F9-9ECCE704512A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42514CA7-FF4C-467A-99F9-9ECCE704512A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A81DFAB-333A-4D8C-A44F-7C086BC37006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A81DFAB-333A-4D8C-A44F-7C086BC37006}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A81DFAB-333A-4D8C-A44F-7C086BC37006}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A81DFAB-333A-4D8C-A44F-7C086BC37006}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
