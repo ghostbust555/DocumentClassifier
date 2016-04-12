@@ -115,7 +115,7 @@ namespace DocumentClassifier.Imaging
         {
             IRandomNumberGenerator generator = new GaussianGenerator(1.05f, 0.1f);
 
-            ResizeBicubic filter = new ResizeBicubic((int)(image.Width*1.07), (int)(image.Height * 1.07));
+            ResizeBicubic filter = new ResizeBicubic((int)(image.Width*1.035), (int)(image.Height * 1.035));
             // apply the filter
             return filter.Apply(image);
         }
@@ -123,7 +123,7 @@ namespace DocumentClassifier.Imaging
         private static Bitmap Crop(Bitmap image, Rectangle originalBounds)
         {
             int offset = (int)((image.Width-originalBounds.Width)/2.0 + .5);
-            Crop filter = new Crop(new Rectangle(offset, offset, originalBounds.Width + offset, originalBounds.Height + offset));
+            Crop filter = new Crop(new Rectangle(offset, offset, originalBounds.Width - offset, originalBounds.Height - offset));
             // apply the filter
             return filter.Apply(image);
         }

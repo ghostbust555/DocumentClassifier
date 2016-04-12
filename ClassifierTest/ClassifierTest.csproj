@@ -130,7 +130,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="generateddata\documents\1040\2010\" />
+    <Folder Include="generateddata\documents\1040\2012\" />
+    <Folder Include="generateddata\documents\1040\other\" />
+    <Folder Include="generateddata\documents\990\" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

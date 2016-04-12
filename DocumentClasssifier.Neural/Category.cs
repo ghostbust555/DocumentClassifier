@@ -25,5 +25,34 @@ namespace DocumentClasssifier.Neural
 
             return cat;
         }
+
+        public override bool Equals(object obj)
+        {
+            return Name == ((Category)(obj)).Name;
+        }
+
+        public static bool operator ==(Category a, Category b)
+        {
+            // If both are null, or both are same instance, return true.
+            if (System.Object.ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            // If one is null, but not both, return false.
+            if (((object)a == null) || ((object)b == null))
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return a.Name == b.Name;
+        }
+
+        public static bool operator !=(Category a, Category b)
+        {
+            return !(a == b);
+        }
+
     }
 }

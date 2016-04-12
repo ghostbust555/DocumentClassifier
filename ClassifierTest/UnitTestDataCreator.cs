@@ -6,6 +6,8 @@ using System.Drawing;
 using DocumentClassifier.Imaging;
 using System.Threading;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace ClassifierTest
 {
@@ -23,11 +25,11 @@ namespace ClassifierTest
         }
 
         [TestMethod]
-        public void TestCategories()
+        public void GenerateTrainingData()
         {
             var ts = new List<TrainingSet>();
 
-            var root = new Category("document");
+            var root = new Category("documents");
             var doc_1040 = root.AddSubcategory("1040");
             var doc_990 = root.AddSubcategory("990");
 
@@ -39,10 +41,10 @@ namespace ClassifierTest
             ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_2.png", doc_1040_other));
             ts.Add(new TrainingSet("trainingdata/documents/1040/2012/tax1040_3.gif", doc_1040_2012));
             ts.Add(new TrainingSet("trainingdata/documents/1040/2010/tax1040_4.jpg", doc_1040_2010));
-            ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_5.gif", doc_1040_other));
-            ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_6.gif", doc_1040_other));
+         //   ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_5.gif", doc_1040_other));
+          //  ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_6.gif", doc_1040_other));
             ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_7.gif", doc_1040_other));
-            ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_8.gif", doc_1040_other));
+         //   ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_8.gif", doc_1040_other));
             ts.Add(new TrainingSet("trainingdata/documents/1040/2010/tax1040_9.jpg", doc_1040_2010));
             ts.Add(new TrainingSet("trainingdata/documents/1040/2012/tax1040_10.gif", doc_1040_2012));
 
@@ -52,19 +54,50 @@ namespace ClassifierTest
             ts.Add(new TrainingSet("trainingdata/documents/990/tax990_4.jpg", doc_990));
             ts.Add(new TrainingSet("trainingdata/documents/990/tax990_5.jpg", doc_990));
             ts.Add(new TrainingSet("trainingdata/documents/990/tax990_6.jpg", doc_990));
-            ts.Add(new TrainingSet("trainingdata/documents/990/tax990_7.jpg", doc_990));
+  
+            int count = 0;
 
-            var t = new Trainer();
+            foreach (var td in ts)
+            {
+                var name = "generateddata";
+                var cat = td.Category;
 
-            var nc = new NetworkCreator();
-            var nl = nc.CreateNetworks(root);
+                var paths = new List<string>();
 
-            t.Train(nl, ts);
+                if (!Directory.Exists(name))
+                    Directory.CreateDirectory(name);
 
-            var o = t.Run(nl, root, "trainingdata/tax990_poor.gif");
-            o = t.Run(nl, root, "trainingdata/tax1040_10.gif");
-            o = t.Run(nl, root, "trainingdata/tax1040_4.jpg");
-            var x = o;
+                while (cat != null)
+                {
+                    paths.Add("/" + cat.Name);
+                    cat = cat.Parent;
+                }
+
+                paths.Reverse();
+
+                foreach (var p in paths)
+                {
+                    name += p;
+                    if (!Directory.Exists(name))
+                        Directory.CreateDirectory(name);
+                }
+
+                for (int i = 0; i < 10; i++)
+                {
+                    var im = ImageDistorter.DistortImage((Bitmap)Image.FromFile(td.ImageFile));
+                    using (MemoryStream memory = new MemoryStream())
+                    {
+                        using (FileStream fs = new FileStream(name + "/" + count+".jpg", FileMode.Create, FileAccess.ReadWrite))
+                        {
+                            im.Save(memory, ImageFormat.Jpeg);
+                            byte[] bytes = memory.ToArray();
+                            fs.Write(bytes, 0, bytes.Length);
+                        }
+                    }
+
+                    count++;
+                }
+            }
         }
     }
 }

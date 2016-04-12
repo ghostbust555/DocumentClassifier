@@ -19,7 +19,7 @@ namespace DocumentClasssifier.Neural
         public List<Category> Catetgories = new List<Category>();
         public List<double[]> ImageData = new List<double[]>();
 
-        const int HIDDEN_LAYER_SIZE = (ImageExtractor.IMAGE_SIZE * ImageExtractor.IMAGE_SIZE)/10;
+        const int HIDDEN_LAYER_SIZE = (ImageExtractor.IMAGE_SIZE * ImageExtractor.IMAGE_SIZE)/20;
 
         public CategoryNetwork(Category category)
         {

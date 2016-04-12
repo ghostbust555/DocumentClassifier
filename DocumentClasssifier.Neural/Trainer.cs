@@ -50,25 +50,52 @@ namespace DocumentClasssifier.Neural
                 var inputs = net.ImageData.ToArray();
                 var outputs = new double[net.Catetgories.Count][];
 
+                var thisValSet = new List<TrainingSet>();
+                if (validationSetList != null)
+                {
+                    foreach (var td in validationSetList)
+                    {
+                        var cat = td.Category;
+
+                        while (cat != null)
+                        {
+                            if (cat.Parent == net.Category)
+                            {
+                                thisValSet.Add(new TrainingSet(td.ImageFile, cat));
+                                break;
+                            }
+
+                            cat = cat.Parent;
+                        }
+                    }
+                }
+
+
+                var valOuts = thisValSet.Select(x => CategoryExtractor.ExtractCategoryFeature(x.Category)).ToArray();
+                var valIns = thisValSet.Select(x => ImageExtractor.ExtractImageFeatures(x.ImageFile)).ToArray();
+
                 for (int i = 0; i < net.Catetgories.Count; i++)
                 {
                     outputs[i] = CategoryExtractor.ExtractCategoryFeature(net.Catetgories[i]);                    
                 }
-
-                double error = 100;
+                
                 int k = 0;
 
+                ng.AddTitle(net.Category.Name);
+                ng.ResetData();
 
-                ng.Series.Points.Clear();
-                error = teacher.ComputeError(inputs, outputs);
+                double localError = teacher.ComputeError(inputs, outputs) / inputs.Length;
+                double validationError = 1;
+
                 DateTime start = DateTime.Now;
-                ng.AddPoint(error, DateTime.Now-start);
-                
+                ng.AddPoint(localError, .1, DateTime.Now-start);
 
-                while (error > .1)
+                //validationError > .5 && 
+                while (validationError > .05 && localError > .04)
                 {
-                    error = teacher.RunEpoch(inputs, outputs);
-                    ng.AddPoint(error, DateTime.Now - start);
+                    localError = teacher.RunEpoch(inputs, outputs)/inputs.Length;
+                    if(valIns.Length > 0) validationError = teacher.ComputeError(valIns, valOuts) / valIns.Length;
+                    ng.AddPoint(localError, validationError, DateTime.Now - start);
                     k++;
                 }
 

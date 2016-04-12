@@ -19,9 +19,10 @@ namespace DocumentClasssifier.Neural
         PlotView Plot;
         public int CX = 0;
         public int Offset = 1;
-        public LineSeries Series;
+        public LineSeries ValidationError;
+        public LineSeries TrainingError;
         public LinearAxis xAxis;
-        public LinearAxis yAxis;
+        public LogarithmicAxis yAxis;
 
         public NetworkGraph()
         {
@@ -37,21 +38,39 @@ namespace DocumentClasssifier.Neural
             Plot.Model.TextColor = OxyColor.FromRgb(0, 0, 0);
 
             // Create Line series
-            Series = new LineSeries { Title = "Error", StrokeThickness = 1 };
+            TrainingError = new LineSeries { Title = "Training Error", StrokeThickness = 1 };
+            ValidationError = new LineSeries { Title = "Validation Error", StrokeThickness = 1 };
 
             // add Series and Axis to plot model
-            Plot.Model.Series.Add(Series);
+            Plot.Model.Series.Add(TrainingError);
+            Plot.Model.Series.Add(ValidationError);
+            
             xAxis = new LinearAxis(AxisPosition.Bottom, 0.0, 10.0);
             Plot.Model.Axes.Add(xAxis);
-            yAxis = new LinearAxis(AxisPosition.Left, 0.0, 5.0);
+            yAxis = new LogarithmicAxis(AxisPosition.Left, "Error", .01, 10);
             Plot.Model.Axes.Add(yAxis);
         }
 
-        public void AddPoint(double val, TimeSpan elapsed)
+        public void AddPoint(double trainingVal, double validationVal, TimeSpan elapsed)
         {
-            Series.Points.Add(new DataPoint(elapsed.TotalSeconds, val));
+            TrainingError.Points.Add(new DataPoint(elapsed.TotalSeconds, trainingVal));
+            ValidationError.Points.Add(new DataPoint(elapsed.TotalSeconds, validationVal));
             xAxis.Maximum = elapsed.TotalSeconds + Offset;
-            yAxis.Maximum = Series.Points.Max(x=>x.Y)*1.1;
+            yAxis.Minimum = Math.Min(TrainingError.Points.Min(x => x.Y) / 1.1, ValidationError.Points.Min(x => x.Y) / 1.1);
+            yAxis.Maximum = Math.Max(TrainingError.Points.Max(x=>x.Y)*1.1,ValidationError.Points.Max(x => x.Y) * 1.1);
+            Plot.Model.ResetAllAxes();
+            Plot.Invalidate();
+        }
+
+        public void AddTitle(string title)
+        {
+            Plot.Model.Title = title;
+        }
+
+        public void ResetData()
+        {
+            TrainingError.Points.Clear();
+            ValidationError.Points.Clear();
             Plot.Model.ResetAllAxes();
             Plot.Invalidate();
         }
