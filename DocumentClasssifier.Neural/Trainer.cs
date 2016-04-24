@@ -14,15 +14,11 @@ namespace DocumentClasssifier.Neural
     {
         public double Train(List<CategoryNetwork> networks, List<TrainingSet> trainingSetList, List<TrainingSet> validationSetList = null)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
             var ng = new NetworkGraph();
 
             new Thread(() =>
             {
-                ng.Show();
-                Application.Run(ng);
+                ng.ShowDialog();
             }).Start();
 
             foreach (var net in networks)
@@ -44,6 +40,9 @@ namespace DocumentClasssifier.Neural
             foreach(var net in networks)
             {
                 var teacher = new ParallelResilientBackpropagationLearning(net.Network);
+
+                ng.AddTitle(net.Category.Name);
+                ng.ResetData();
 
                 teacher.UpdateUpperBound = 500;
 
@@ -81,8 +80,6 @@ namespace DocumentClasssifier.Neural
                 
                 int k = 0;
 
-                ng.AddTitle(net.Category.Name);
-                ng.ResetData();
 
                 double localError = teacher.ComputeError(inputs, outputs) / inputs.Length;
                 double validationError = 1;
