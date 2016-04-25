@@ -86,8 +86,7 @@ namespace DocumentClasssifier.Neural
 
                 DateTime start = DateTime.Now;
                 ng.AddPoint(localError, .1, DateTime.Now-start);
-
-                //validationError > .5 && 
+                
                 while (validationError > .05 && localError > .04)
                 {
                     localError = teacher.RunEpoch(inputs, outputs)/inputs.Length;

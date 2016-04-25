@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace ClassifierTest
 {
     [TestClass]
-    public class UnitTest1
+    public class UnitTestClassifier
     {
         [TestMethod]
         public void GetImageData()

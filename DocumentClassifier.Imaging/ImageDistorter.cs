@@ -30,7 +30,7 @@ namespace DocumentClassifier.Imaging
                 image = Speckle(image);
 
             if (r.NextDouble() > .5)
-                image = Filter(image);
+                image = Texturize(image);
 
             if (r.NextDouble() > .5)
                 image = Smooth(image);
@@ -101,12 +101,12 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
-        private static Bitmap Filter(Bitmap image)
+        private static Bitmap Texturize(Bitmap image)
         {
-            IRandomNumberGenerator generator = new GaussianGenerator(0.05f, 0.4f);
+            IRandomNumberGenerator generator = new GaussianGenerator(-.25f, 0.3f);
             
             // create filter
-            Texturer filter = new Texturer(new CloudsTexture(), generator.Next(), .98);
+            Texturer filter = new Texturer(new CloudsTexture(), generator.Next(), .995);//.98
             // apply the filter
             return filter.Apply(image);
         }
