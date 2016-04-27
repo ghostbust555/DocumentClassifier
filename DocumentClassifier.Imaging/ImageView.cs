@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace DocumentClassifier.Imaging
 {
+    //This form displays one or two images side by side for easy debugging purposes
     public partial class ImageView : Form
     {
         public ImageView(Image image1, Image image2=null)

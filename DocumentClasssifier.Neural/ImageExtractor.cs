@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace DocumentClasssifier.Neural
 {
+    //extracts the feature vector from an image by resizing it to 200x200 pixels and then concateninting the 2d array into a 1d array row by row
     public class ImageExtractor
     {
         public const int IMAGE_SIZE = 200;

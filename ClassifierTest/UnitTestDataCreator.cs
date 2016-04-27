@@ -41,10 +41,7 @@ namespace ClassifierTest
             ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_2.png", doc_1040_other));
             ts.Add(new TrainingSet("trainingdata/documents/1040/2012/tax1040_3.gif", doc_1040_2012));
             ts.Add(new TrainingSet("trainingdata/documents/1040/2010/tax1040_4.jpg", doc_1040_2010));
-         //   ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_5.gif", doc_1040_other));
-          //  ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_6.gif", doc_1040_other));
             ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_7.gif", doc_1040_other));
-         //   ts.Add(new TrainingSet("trainingdata/documents/1040/other/tax1040_8.gif", doc_1040_other));
             ts.Add(new TrainingSet("trainingdata/documents/1040/2010/tax1040_9.jpg", doc_1040_2010));
             ts.Add(new TrainingSet("trainingdata/documents/1040/2012/tax1040_10.gif", doc_1040_2012));
 

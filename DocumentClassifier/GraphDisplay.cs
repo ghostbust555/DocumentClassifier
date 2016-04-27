@@ -17,76 +17,97 @@ namespace DocumentClassifier
 {
     public partial class GraphDisplay : Form
     { 
-    
+        //This is the root category of the classification tree
         Category root;
 
         public GraphDisplay()
         {
+            //Initialize UI
             InitializeComponent();
+            //Invalidate UI to recall OnPaint
             Invalidate();
 
+            //Start a new thread to generate training data, create the classification tree and train the networks
             new Thread(() =>
             {
+                //Generate distorted images for training
                 GenerateTrainingData();
+                //Generate the classification tree and train it recursively
                 RunNetwork();
             }).Start();
         }
 
-        int bubbleOffset = 50;
-        int bubbleSize = 50;
-        int yOffset = 20;
-        int levelOffset = 120;
 
+        int bubbleOffset = 50; //Tree bubble spacing
+        int bubbleSize = 50; //tree bubble size
+        int yOffset = 20; // total window height offset
+        int levelOffset = 120; //space between parent and children in the tree
+
+        //This is the main UI drawing method. Called whenever the form is invalidated
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
 
             if (root != null)
             {
-                var bounds = Size;
+                var bounds = Size; //set = windows size
+
+                //create a new string formatter for center alignment of text
                 StringFormat stringFormat = new StringFormat();
                 stringFormat.Alignment = StringAlignment.Center;
                 stringFormat.LineAlignment = StringAlignment.Center;
                 var font = new Font(DefaultFont.FontFamily, 10, FontStyle.Regular);
+
+                //calculate the root bubble bounds
                 var bubble = new RectangleF(bubbleOffset, (float)(bounds.Height / 2.0 - bubbleSize / 2.0 - yOffset), bubbleSize, bubbleSize);
 
-                PaintBubble(root, 0, font, stringFormat, bubble, e.Graphics);
+                //call the paintBubble recursive function to draw the tree
+                PaintBubble(root, font, stringFormat, bubble, e.Graphics);
             }
         }
 
-        public void PaintBubble(Category cat, int level, Font font, StringFormat stringFormat, RectangleF bubble, Graphics g)
+        //Draws the bubble for a current node and then recursively calls its children
+        public void PaintBubble(Category cat, Font font, StringFormat stringFormat, RectangleF bubble, Graphics g)
         {
+            //draw the bubble and string
             g.FillEllipse(Brushes.DarkSlateBlue, bubble);
             g.DrawString(cat.Name, font, Brushes.White, bubble, stringFormat);
 
+            //calculate the next layers offset
             var thisBubbleOffset = (int)((bubbleOffset*1.0) / cat.Children.Count) * 2;
-
             int yCentering = (int)(cat.Children.Count * (bubble.Height + thisBubbleOffset-1) / 4);
 
+            //recursively call all child nodes
             int i = 0;
             foreach(var child in cat.Children)
             {
                 var newBounds = new RectangleF(bubble.X+levelOffset, bubble.Y + i * 2* thisBubbleOffset - yCentering, bubble.Width, bubble.Height);
                 g.DrawLine(Pens.Black, bubble.X+bubbleSize, bubble.Y + bubbleSize / 2, newBounds.X, newBounds.Y+bubbleSize / 2);
-                PaintBubble(child, level+1, font, stringFormat, newBounds, g);
+                PaintBubble(child, font, stringFormat, newBounds, g);
                 i++;
             }
         }
 
+        //location of the trainingdata and generateddata folders
         const string path = "../../../ClassifierTest/bin/Debug";
 
+        //Take categroized data and generate random distortions on the dataset. This will generate 10 distorted images per input image
         public void GenerateTrainingData()
         {
+            //create a new training set
             var ts = new List<TrainingSet>();
 
+            //Create a root node with lable documents and give it two children, 1040 and 990
             var root = new Category("documents");
             var doc_1040 = root.AddSubcategory("1040");
             var doc_990 = root.AddSubcategory("990");
 
+            //further define tree structure
             var doc_1040_2012 = doc_1040.AddSubcategory("2012");
             var doc_1040_2010 = doc_1040.AddSubcategory("2010");
             var doc_1040_other = doc_1040.AddSubcategory("other");
 
+            //add data to the tree
             ts.Add(new TrainingSet(path + "/trainingdata/documents/1040/other/tax1040.gif", doc_1040_other));
             ts.Add(new TrainingSet(path + "/trainingdata/documents/1040/other/tax1040_2.png", doc_1040_other));
             ts.Add(new TrainingSet(path + "/trainingdata/documents/1040/2012/tax1040_3.gif", doc_1040_2012));
@@ -104,6 +125,7 @@ namespace DocumentClassifier
 
             int count = 0;
 
+            //loop through the tree and generate 10 distorted vesrions of every image
             foreach (var td in ts)
             {
                 var name = path + "/generateddata";
@@ -131,6 +153,7 @@ namespace DocumentClassifier
 
                 for (int i = 0; i < 10; i++)
                 {
+                    //Distort the image and save it to disk
                     var im = ImageDistorter.DistortImage((Bitmap)Image.FromFile(td.ImageFile));
                     using (MemoryStream memory = new MemoryStream())
                     {
@@ -147,6 +170,7 @@ namespace DocumentClassifier
             }
         }
 
+        //Generate the classification tree and start training it recursively
         public void RunNetwork()
         {
             var validationSet = TrainingSet.FromDirectory(path+"/trainingdata");

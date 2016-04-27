@@ -12,10 +12,12 @@ using AForge.Imaging.Textures;
 
 namespace DocumentClassifier.Imaging
 {
+    //Static class to cause random image distortions
     public class ImageDistorter
     {
         static Random r = new Random();
 
+        //randomly applpiy distortions
         public static Image DistortImage(Bitmap image)
         {
             Rectangle originalBounds = new Rectangle(0, 0, image.Width, image.Height);
@@ -44,6 +46,7 @@ namespace DocumentClassifier.Imaging
             return image;
         }
 
+        //cause gaussian noise spikes
         private static Bitmap Speckle(Bitmap image)
         {
             IRandomNumberGenerator generator = new GaussianGenerator(0f, 5f);
@@ -55,6 +58,7 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
+        //rotate with bicubic interpolation
         private static Bitmap Rotate(Bitmap image)
         {
             var angle = r.NextDouble()*.8 - .4;
@@ -63,6 +67,7 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
+        //sharpen the image
         private static Bitmap Sharpen(Bitmap image)
         {
             // create filter
@@ -71,6 +76,7 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
+        //smooth salt and pepper noise
         private static Bitmap Smooth(Bitmap image)
         {
             // create filter
@@ -79,6 +85,7 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
+        //apply random gaussian blur
         private static Bitmap Blur(Bitmap image)
         {
             // create filter
@@ -87,6 +94,7 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
+        //apply 1-3 waves
         private static Bitmap Wave(Bitmap image)
         {
             var h = (int)(r.NextDouble() * 3);
@@ -101,6 +109,7 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
+        //apply couds texture to smudge the image
         private static Bitmap Texturize(Bitmap image)
         {
             IRandomNumberGenerator generator = new GaussianGenerator(-.25f, 0.3f);
@@ -111,6 +120,7 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
+        //scale bicubic
         private static Bitmap Scale(Bitmap image)
         {
             IRandomNumberGenerator generator = new GaussianGenerator(1.05f, 0.1f);
@@ -120,6 +130,7 @@ namespace DocumentClassifier.Imaging
             return filter.Apply(image);
         }
 
+        //crop the image
         private static Bitmap Crop(Bitmap image, Rectangle originalBounds)
         {
             int offset = (int)((image.Width-originalBounds.Width)/2.0 + .5);

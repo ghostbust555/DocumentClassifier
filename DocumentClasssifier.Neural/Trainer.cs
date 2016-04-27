@@ -12,20 +12,24 @@ namespace DocumentClasssifier.Neural
 {
     public class Trainer
     {
+        //train the classifier networks
         public double Train(List<CategoryNetwork> networks, List<TrainingSet> trainingSetList, List<TrainingSet> validationSetList = null)
         {
             var ng = new NetworkGraph();
 
+            //open a new training process display in a new thread
             new Thread(() =>
             {
                 ng.ShowDialog();
             }).Start();
 
+            //start fresh, reset all networks
             foreach (var net in networks)
             {
                 net.ClearData();
             }
 
+            //create a list of categoryNetworks and add the images to them to generate epochs
             for (int i = 0; i < trainingSetList.Count; i++) {
                 var cat = trainingSetList[i].Category;
                 var imageData = ImageExtractor.ExtractImageFeatures(trainingSetList[i].ImageFile);
@@ -37,10 +41,12 @@ namespace DocumentClasssifier.Neural
                 }
             }
 
+            //for each network begin training with paralell rprop
             foreach(var net in networks)
             {
                 var teacher = new ParallelResilientBackpropagationLearning(net.Network);
 
+                //display the category being trained
                 ng.AddTitle(net.Category.Name);
                 ng.ResetData();
 
@@ -49,6 +55,8 @@ namespace DocumentClasssifier.Neural
                 var inputs = net.ImageData.ToArray();
                 var outputs = new double[net.Catetgories.Count][];
 
+
+                //dtermine which documents belong to the calidation set for the network currently being trained
                 var thisValSet = new List<TrainingSet>();
                 if (validationSetList != null)
                 {
@@ -69,7 +77,7 @@ namespace DocumentClasssifier.Neural
                     }
                 }
 
-
+                //vectorize these images and their respective categorical classification
                 var valOuts = thisValSet.Select(x => CategoryExtractor.ExtractCategoryFeature(x.Category)).ToArray();
                 var valIns = thisValSet.Select(x => ImageExtractor.ExtractImageFeatures(x.ImageFile)).ToArray();
 
@@ -80,13 +88,14 @@ namespace DocumentClasssifier.Neural
                 
                 int k = 0;
 
-
+                //find the current batch error during training
                 double localError = teacher.ComputeError(inputs, outputs) / inputs.Length;
                 double validationError = 1;
 
                 DateTime start = DateTime.Now;
-                ng.AddPoint(localError, .1, DateTime.Now-start);
+                ng.AddPoint(localError, localError, DateTime.Now-start);
                 
+                //find the validation error by checking the validation set on the network
                 while (validationError > .05 && localError > .04)
                 {
                     localError = teacher.RunEpoch(inputs, outputs)/inputs.Length;
@@ -94,19 +103,20 @@ namespace DocumentClasssifier.Neural
                     ng.AddPoint(localError, validationError, DateTime.Now - start);
                     k++;
                 }
-
-                //ng.Invoke((MethodInvoker)delegate () { ng.Close(); });
+                
             }
                         
             return 0;
         }
 
+        //Find the category and confidence chain of an image
         public List<Result> Run(List<CategoryNetwork> networks, Category root, string imageFile)
         {
             var output = new List<Result>();
 
             var currentCategory = root;
 
+            //keep deeping until you hit a terminal node
             while (currentCategory.Children.Count > 0)
             {
                 var net = GetNetwork(networks, currentCategory);
@@ -123,6 +133,7 @@ namespace DocumentClasssifier.Neural
             return output;
         }
 
+        //Find the categories and confidence chain values for a set of images
         public List<List<Result>> Run(List<CategoryNetwork> networks, Category root, List<string> imageFiles)
         {
             var output = new List<List<Result>>();
@@ -135,7 +146,7 @@ namespace DocumentClasssifier.Neural
             return output;
         }
 
-
+        //Get the network belonging to a specific category from a list of networks
         public CategoryNetwork GetNetwork(List<CategoryNetwork> networks, Category cat)
         {
             foreach(var cn in networks)
