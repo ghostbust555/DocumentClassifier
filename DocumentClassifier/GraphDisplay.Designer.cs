@@ -1,6 +1,6 @@
 ﻿namespace DocumentClassifier
 {
-    partial class Form1
+    partial class GraphDisplay
     {
         /// <summary>
         /// Required designer variable.
