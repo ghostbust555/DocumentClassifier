@@ -19,6 +19,7 @@ namespace DocumentClassifier
     { 
         //This is the root category of the classification tree
         Category root;
+        List<Result> results = null;
 
         public GraphDisplay()
         {
@@ -28,13 +29,15 @@ namespace DocumentClassifier
             Invalidate();
 
             //Start a new thread to generate training data, create the classification tree and train the networks
-            new Thread(() =>
-            {
-                //Generate distorted images for training
-                GenerateTrainingData();
-                //Generate the classification tree and train it recursively
+            //new Thread(() =>
+            //{
+                
+                ////Generate distorted images for training
+                //GenerateTrainingData();
+                ////Generate the classification tree and train it recursively
                 RunNetwork();
-            }).Start();
+
+            //}).Start();
         }
 
 
@@ -69,8 +72,14 @@ namespace DocumentClassifier
         //Draws the bubble for a current node and then recursively calls its children
         public void PaintBubble(Category cat, Font font, StringFormat stringFormat, RectangleF bubble, Graphics g)
         {
+            var brush = Brushes.DarkSlateBlue;
+            if (results != null && results.Select(x=>x.Category).Where(x=>x.Name == cat.Name).Count() > 0)
+            {
+                brush = Brushes.Red;
+            }
+
             //draw the bubble and string
-            g.FillEllipse(Brushes.DarkSlateBlue, bubble);
+            g.FillEllipse(brush, bubble);
             g.DrawString(cat.Name, font, Brushes.White, bubble, stringFormat);
 
             //calculate the next layers offset
@@ -177,7 +186,8 @@ namespace DocumentClassifier
             var trainingSet = TrainingSet.FromDirectory(path +"/generateddata");
 
             root = trainingSet.Item2;
-            Invoke(new MethodInvoker(Invalidate));
+            Invalidate();
+            //Invoke(new MethodInvoker(Invalidate));
 
             var t = new Trainer();
 
@@ -185,11 +195,31 @@ namespace DocumentClassifier
             var nl = nc.CreateNetworks(root);
 
             t.Train(nl, trainingSet.Item1, validationSet.Item1);
+                       
 
-            var o = t.Run(nl, trainingSet.Item2, path + "/trainingdata/documents/990/tax990_poor.gif");
-            o = t.Run(nl, trainingSet.Item2, path + "/trainingdata/documents/1040/2012/tax1040_10.gif");
-            o = t.Run(nl, trainingSet.Item2, path + "/trainingdata/documents/1040/2010/tax1040_4.jpg");
-            var x = o;
+            new Thread(() =>
+            {
+                var thisImagePath = path + "/trainingdata/documents/990/tax990.jpg";
+                results = t.Run(nl, trainingSet.Item2, thisImagePath);
+                Invalidate();
+                var iv = new ImageView(Image.FromFile(thisImagePath));
+                iv.Visible = false;
+                iv.ShowDialog();
+
+                thisImagePath = path + "/trainingdata/documents/1040/2012/tax1040_10.gif";
+                results = t.Run(nl, trainingSet.Item2, thisImagePath);
+                Invalidate();
+                iv = new ImageView(Image.FromFile(thisImagePath));
+                iv.Visible = false;
+                iv.ShowDialog();
+
+                thisImagePath = path + "/trainingdata/documents/1040/2010/tax1040_4.jpg";
+                results = t.Run(nl, trainingSet.Item2, thisImagePath);
+                Invalidate();
+                iv = new ImageView(Image.FromFile(thisImagePath));
+                iv.Visible = false;
+                iv.ShowDialog();
+            }).Start();
         }
     }
 }

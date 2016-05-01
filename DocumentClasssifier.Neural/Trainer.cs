@@ -20,6 +20,7 @@ namespace DocumentClasssifier.Neural
             //open a new training process display in a new thread
             new Thread(() =>
             {
+                ng.Load += (sender, e) => (sender as NetworkGraph).Visible = true;
                 ng.ShowDialog();
             }).Start();
 
@@ -50,7 +51,7 @@ namespace DocumentClasssifier.Neural
                 ng.AddTitle(net.Category.Name);
                 ng.ResetData();
 
-                teacher.UpdateUpperBound = 500;
+             //   teacher.UpdateUpperBound = 500;
 
                 var inputs = net.ImageData.ToArray();
                 var outputs = new double[net.Catetgories.Count][];
